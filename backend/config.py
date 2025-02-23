@@ -11,10 +11,7 @@ from fastapi.logger import logger as fastapi_logger
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 load_dotenv(os.path.join(BASE_DIR, ".env"))
 
-DATABASE_URL = os.getenv(
-    "DATABASE_URL",
-    "postgresql+asyncpg://postgres:postgres@db/peanut-butter-payroll",
-)
+DATABASE_URL = os.getenv("DATABASE_URL")
 
 LOGGING_FORMAT = "%(levelname)s: %(name)s: %(message)s"
 
@@ -39,5 +36,3 @@ def str2bool(arg: int | str) -> bool:
 DEBUG = str2bool(os.getenv("DEBUG", "false"))
 
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "*").split(",")
-
-REDIS_URL = os.getenv("REDIS_URL", "redis://redis:6379")

@@ -1,24 +1,31 @@
-""" Description: Main entry point for the FastAPI application. """
-
-import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from contextlib import asynccontextmanager
 
-from api import api_router
+from api import router as employee_router
 from database import engine
 from models import Base
 from config import configure_logging, DEBUG, ALLOWED_HOSTS
 
 configure_logging()
 
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup: create tables
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+    yield
+    # Shutdown: dispose engine
+    await engine.dispose()
+
+
 app = FastAPI(
     title="Peannut Butter Payroll API",
     description="An API for managing payroll for Peanut Butter company",
     version="0.1.0",
     debug=DEBUG,
-    host="0.0.0.0",
-    port=8080,
-    url_prefix="/api",
+    lifespan=lifespan,
 )
 
 app.add_middleware(
@@ -29,19 +36,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
-@app.on_event("startup")
-async def startup():
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
-
-
-@app.on_event("shutdown")
-async def shutdown():
-    await engine.dispose()
-
-
-app.include_router(api_router)
+app.include_router(employee_router)
 
 if __name__ == "__main__":
+    import uvicorn
+
     uvicorn.run("main:app", host="0.0.0.0", port=8000)
