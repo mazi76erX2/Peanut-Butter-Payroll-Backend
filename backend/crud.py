@@ -6,9 +6,7 @@ from schemas import EmployeeCreate, EmployeeUpdate
 
 
 async def get_employee(db: AsyncSession, employee_id: int) -> Optional[Employee]:
-    result = await db.execute(
-        select(Employee).where(Employee.id == employee_id)
-    )
+    result = await db.execute(select(Employee).where(Employee.id == employee_id))
     return result.scalar_one_or_none()
 
 
@@ -28,9 +26,7 @@ async def get_employees(
     return result.scalars().all()
 
 
-async def create_employee(
-    db: AsyncSession, employee: EmployeeCreate
-) -> Employee:
+async def create_employee(db: AsyncSession, employee: EmployeeCreate) -> Employee:
     db_employee = Employee(**employee.model_dump())
     db.add(db_employee)
     await db.commit()

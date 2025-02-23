@@ -97,10 +97,10 @@ async def seed_data_endpoint(db: AsyncSession = Depends(get_session)) -> dict:
             "employee_number": str(fake.random_number(digits=5, fix_len=True)),
             "first_name": fake.first_name(),
             "last_name": fake.last_name(),
+            "gender": "Unspecified",
             "salutation": fake.random_element(
                 elements=("Mr.", "Mrs.", "Ms.", "Dr.", "Mx.")
             ),
-            "gender": "Unspecified",
             "gross_salary": fake.random_int(min=30000, max=100000),
             "profile_color": fake.random_element(
                 elements=("Default", "Green", "Blue", "Red")

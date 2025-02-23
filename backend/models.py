@@ -51,10 +51,25 @@ class Employee(Base):
 
 
 @event.listens_for(Employee, "before_insert")
-def set_full_name_before_insert(mapper: Any, connection: Any, target: Employee) -> None:
+def set_fields_before_insert(mapper: Any, connection: Any, target: Employee) -> None:
     target.full_name = f"{target.first_name} {target.last_name}".strip()
+    # Override gender based on salutation
+    if target.salutation == "Mr.":
+        target.gender = "Male"
+    elif target.salutation in {"Mrs.", "Ms."}:
+        target.gender = "Female"
+    elif target.salutation == "Mx.":
+        target.gender = "Unspecified"
 
 
 @event.listens_for(Employee, "before_update")
-def set_full_name_before_update(mapper: Any, connection: Any, target: Employee) -> None:
+def set_fields_before_update(mapper: Any, connection: Any, target: Employee) -> None:
+    # Always recalc full_name
     target.full_name = f"{target.first_name} {target.last_name}".strip()
+    # Override gender based on salutation
+    if target.salutation == "Mr.":
+        target.gender = "Male"
+    elif target.salutation in {"Mrs.", "Ms."}:
+        target.gender = "Female"
+    elif target.salutation == "Mx.":
+        target.gender = "Unspecified"

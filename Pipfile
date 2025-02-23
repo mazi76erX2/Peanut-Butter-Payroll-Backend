@@ -20,6 +20,8 @@ isort = "5.13.2"
 pylint = "3.1.1"
 black = "24.4.2"
 pytest = "8.2.0"
+pytest-asyncio = "0.25.3"
+httpx = "0.28.1"
 sqlalchemy-stubs = "*"
 
 [requires]
