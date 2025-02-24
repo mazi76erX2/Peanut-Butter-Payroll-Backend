@@ -27,3 +27,6 @@ COPY . .
 
 # Set the entrypoint command
 EXPOSE 8000
+
+# Default command
+CMD ["bash", "-c", "alembic upgrade head && uvicorn main:app --host 0.0.0.0 --app-dir backend --port 8000 --reload"]
