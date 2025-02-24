@@ -58,18 +58,22 @@ pipeline {
         stage('Update ECS Task Definition') {
             steps {
                 script {
-                    def taskDefRaw = sh(
-                        script: "aws ecs describe-task-definition --task-definition ${TASK_DEFINITION} --region ${AWS_DEFAULT_REGION} | jq '.taskDefinition'",
+                    // Extract the inner task definition and remove keys that ECS doesn't allow.
+                    def filteredTaskDef = sh(
+                        script: """
+                            aws ecs describe-task-definition --task-definition ${TASK_DEFINITION} --region ${AWS_DEFAULT_REGION} | \
+                            jq '.taskDefinition | del(.taskDefinitionArn, .revision, .status, .requiresAttributes, .compatibilities, .registeredAt, .registeredBy)'
+                        """,
                         returnStdout: true
                     ).trim()
 
-                    def updatedTaskDef = taskDefRaw.replaceAll(
-                        "image\": \"${REPOSITORY_URI}:[a-zA-Z0-9._-]+\"",
-                        "image\": \"${REPOSITORY_URI}:${IMAGE_TAG}\""
-                    )
+                    // Optionally, verify the top-level keys (for debugging):
+                    sh "echo '${filteredTaskDef}' | jq 'keys'"
 
-                    writeFile file: 'task-definition.json', text: updatedTaskDef
+                    // Write the filtered JSON to a file.
+                    writeFile file: 'task-definition.json', text: filteredTaskDef
 
+                    // Register the new task definition.
                     sh """
                         aws ecs register-task-definition \
                             --cli-input-json file://task-definition.json \
