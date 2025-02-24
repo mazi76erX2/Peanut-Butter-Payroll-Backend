@@ -1,15 +1,15 @@
 pipeline {
     agent any
-    
+
     environment {
-        AWS_ACCOUNT_ID = '905418310640'
-        AWS_DEFAULT_REGION = 'af-south-1'
-        IMAGE_REPO_NAME = 'peanut-butter-payroll-backend:latest'
-        IMAGE_TAG = "${env.BUILD_NUMBER}"
-        REPOSITORY_URI = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${IMAGE_REPO_NAME}"
-        ECS_CLUSTER = 'peanut-butter-payroll-backend'
-        ECS_SERVICE = 'peanut-butter-payroll-backend-service'
-        TASK_DEFINITION_NAME = 'peanut-butter-payroll-backend-task'
+        AWS_ACCOUNT_ID    = '905418310640'
+        AWS_DEFAULT_REGION= 'af-south-1'
+        IMAGE_REPO_NAME   = 'peanut-butter-payroll-backend'
+        IMAGE_TAG         = "${env.BUILD_NUMBER}"
+        REPOSITORY_URI    = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${IMAGE_REPO_NAME}"
+        ECS_CLUSTER       = 'peanut-butter-payroll-backend'
+        ECS_SERVICE       = 'peanut-butter-payroll-backend-service'
+        TASK_DEFINITION   = 'peanut-butter-payroll-backend-task'
     }
     
     stages {
@@ -19,32 +19,29 @@ pipeline {
             }
         }
         
-        stage('Install AWS CLI') {
-            steps {
-                sh '''
-                    curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-                    unzip awscliv2.zip
-                    sudo ./aws/install
-                '''
-            }
-        }
-        
         stage('Configure AWS credentials') {
             steps {
-                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', 
-                                credentialsId: 'aws-credentials',
-                                accessKeyVariable: 'AWS_ACCESS_KEY_ID',
-                                secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
-                    sh 'aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID'
-                    sh 'aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY'
-                    sh 'aws configure set default.region ${AWS_DEFAULT_REGION}'
+                withCredentials([[
+                    $class: 'AmazonWebServicesCredentialsBinding', 
+                    credentialsId: 'aws-credentials',
+                    accessKeyVariable: 'AWS_ACCESS_KEY_ID',
+                    secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
+                ]]) {
+                    sh '''
+                      aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
+                      aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
+                      aws configure set default.region ${AWS_DEFAULT_REGION}
+                    '''
                 }
             }
         }
         
         stage('Login to ECR') {
             steps {
-                sh 'aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com'
+                sh '''
+                    aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | \
+                      docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com
+                '''
             }
         }
         
@@ -64,7 +61,7 @@ pipeline {
             steps {
                 script {
                     def taskDef = sh(
-                        script: "aws ecs describe-task-definition --task-definition ${TASK_DEFINITION_NAME} --region ${AWS_DEFAULT_REGION}",
+                        script: "aws ecs describe-task-definition --task-definition ${TASK_DEFINITION} --region ${AWS_DEFAULT_REGION}",
                         returnStdout: true
                     ).trim()
                     
@@ -85,14 +82,14 @@ pipeline {
         
         stage('Deploy to ECS') {
             steps {
-                sh """
+                sh '''
                     aws ecs update-service \
                         --cluster ${ECS_CLUSTER} \
                         --service ${ECS_SERVICE} \
-                        --task-definition ${TASK_DEFINITION_NAME} \
+                        --task-definition ${TASK_DEFINITION} \
                         --force-new-deployment \
                         --region ${AWS_DEFAULT_REGION}
-                """
+                '''
             }
         }
     }
