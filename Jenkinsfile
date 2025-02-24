@@ -44,19 +44,17 @@ pipeline {
                 '''
             }
         }
-        
+
         stage('Build and Push Docker Image') {
             steps {
-                dir('docker/backend') {
-                    sh '''
-                        docker build -t ${IMAGE_REPO_NAME}:${IMAGE_TAG} .
-                        docker tag ${IMAGE_REPO_NAME}:${IMAGE_TAG} ${REPOSITORY_URI}:${IMAGE_TAG}
-                        docker push ${REPOSITORY_URI}:${IMAGE_TAG}
-                    '''
-                }
+                sh '''
+                    docker build -t ${IMAGE_REPO_NAME}:${IMAGE_TAG} -f docker/backend/Dockerfile .
+                    docker tag ${IMAGE_REPO_NAME}:${IMAGE_TAG} ${REPOSITORY_URI}:${IMAGE_TAG}
+                    docker push ${REPOSITORY_URI}:${IMAGE_TAG}
+                '''
             }
         }
-        
+
         stage('Update ECS Task Definition') {
             steps {
                 script {
