@@ -2,7 +2,7 @@ pipeline {
     agent any
     
     environment {
-        AWS_ACCOUNT_ID = credentials('AWS_ACCOUNT_ID')
+        AWS_ACCOUNT_ID = '905418310640'
         AWS_DEFAULT_REGION = 'af-south-1'
         IMAGE_REPO_NAME = 'peanut-butter-payroll-backend:latest'
         IMAGE_TAG = "${env.BUILD_NUMBER}"
