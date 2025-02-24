@@ -9,7 +9,7 @@ pipeline {
         REPOSITORY_URI    = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${IMAGE_REPO_NAME}"
         ECS_CLUSTER       = 'peanut-butter-payroll-backend'
         ECS_SERVICE       = 'peanut-butter-payroll-backend-service'
-        TASK_DEFINITION   = 'peanut-butter-payroll-backend-task'
+        TASK_DEFINITION   = 'peanut-butter-payroll-backend'
     }
     
     stages {
