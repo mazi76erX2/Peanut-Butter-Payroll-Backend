@@ -58,18 +58,19 @@ pipeline {
         stage('Update ECS Task Definition') {
             steps {
                 script {
-                    def taskDef = sh(
-                        script: "aws ecs describe-task-definition --task-definition ${TASK_DEFINITION} --region ${AWS_DEFAULT_REGION}",
+                    def taskDefRaw = sh(
+                        script: "aws ecs describe-task-definition --task-definition ${TASK_DEFINITION} --region ${AWS_DEFAULT_REGION} | jq '.taskDefinition'",
                         returnStdout: true
                     ).trim()
-                    
-                    def updatedTaskDef = taskDef.replaceAll(
+
+                    def updatedTaskDef = taskDefRaw.replaceAll(
                         "image\": \"${REPOSITORY_URI}:[a-zA-Z0-9._-]+\"",
                         "image\": \"${REPOSITORY_URI}:${IMAGE_TAG}\""
                     )
-                    
+
+                    writeFile file: 'task-definition.json', text: updatedTaskDef
+
                     sh """
-                        echo '${updatedTaskDef}' > task-definition.json
                         aws ecs register-task-definition \
                             --cli-input-json file://task-definition.json \
                             --region ${AWS_DEFAULT_REGION}
