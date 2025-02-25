@@ -24,7 +24,7 @@ pipeline {
             steps {
                 script {
                     echo "Building Docker image ${IMAGE_REPO_NAME}:${IMAGE_TAG}"
-                    sh "docker build -t ${IMAGE_REPO_NAME}:${IMAGE_TAG} ."
+                    sh "docker build -t ${IMAGE_REPO_NAME}:${IMAGE_TAG} -f docker/backend/Dockerfile ."
                 }
             }
         }
