@@ -85,3 +85,4 @@ make docker-migrate
 - **PostgreSQL**: PostgreSQL is a powerful, open-source relational database management system that is widely used in production environments.
 - **SQLAlchemy**: SQLAlchemy is a popular SQL toolkit and Object-Relational Mapping (ORM) library for Python. I feel like using an ORM will make it easier to interact with the database and write queries especially for other developers who may not be familiar with SQL.
 - **asyncpg**: asyncpg is a fast PostgreSQL database client library for Python. It is designed for use with the async/await syntax and provides support for asynchronous I/O operations.
+- **Docker**: Docker is a popular tool for building, shipping, and running applications in containers. It provides a lightweight and portable way to package applications and their dependencies, which makes it easy to deploy applications in different environments.
