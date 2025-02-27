@@ -1,6 +1,10 @@
 # Peanut-Butter-Payroll-Backend
 a FastAPI application for peanut butter payroll using Postgres and Jenkins for deployment
 
+![Peanut Butter Payroll Screenshot](public/homepage.png)
+
+🔗 **Live Demo**: [Peanut Butter Payroll Backend on Render](https://peanut-butter-payroll-backend.onrender.com/docs)
+
 ## Table of Contents
 - [Peanut-Butter-Payroll-Backend](#peanut-butter-payroll-backend)
   - [Table of Contents](#table-of-contents)
@@ -72,11 +76,7 @@ make docker-migrate
 1. **Open the application in your browser:**
    For the FastAPI application OpenAPI docs: [http://localhost:8000/docs](http://localhost:8000/docs)
 
-    For the Next.js application: [http://localhost:3000](http://localhost:3000)
-
-    For PGAdmin: [http://localhost:5050](http://localhost:5050) this is used to view and add data to the database manually.
-
-    To create mock data for the database navigation to the FastAPI application OpenAPI docs and use the `POST /items/create_mock_data/generate-mock-data/` endpoint or click on the 'Create Mock Data' button on the Next.js application.
+    To create mock data for the database navigation to the FastAPI application OpenAPI docs and use the `POST /api/seed` endpoint or click on seed data in the FastAPI docs page.
 
 ## Tools and Justifications
 
