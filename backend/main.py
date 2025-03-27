@@ -21,7 +21,7 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(
-    title="Peannut Butter Payroll API",
+    title="Peanut Butter Payroll API",
     description="An API for managing payroll for Peanut Butter company",
     version="0.1.0",
     debug=DEBUG,
